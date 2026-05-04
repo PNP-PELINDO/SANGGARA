@@ -33,6 +33,8 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                // Tepat di sini: Mengambil notifikasi yang belum dibaca dari user yang sedang login
+                'notifications' => $request->user() ? $request->user()->unreadNotifications : [],
             ],
         ];
     }

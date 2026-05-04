@@ -46,7 +46,7 @@ export default function Dashboard({ auth, agregat, big_four }) {
                         </div>
                     </div>
 
-                    {/* Card: Realisasi (Cau-cau) */}
+                    {/* Card: Realisasi (COA) */}
                     <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-white/5 relative overflow-hidden group">
                         <div className="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/5 rounded-full group-hover:scale-110 transition-transform duration-500"></div>
                         <div className="relative z-10">
@@ -119,7 +119,7 @@ export default function Dashboard({ auth, agregat, big_four }) {
                             <svg className="w-40 h-40" fill="currentColor" viewBox="0 0 24 24"><path d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                         </div>
                         <div className="relative z-10">
-                            <h4 className="text-xl font-black mb-2">Manajemen Cau-cau</h4>
+                            <h4 className="text-xl font-black mb-2">Manajemen COA</h4>
                             <p className="text-blue-100 text-sm max-w-xs">Mulai menginput realisasi harian dan lakukan auto-kalkulasi master.</p>
                             <button className="mt-6 px-6 py-3 bg-white text-blue-600 font-bold rounded-xl text-xs hover:bg-blue-50 transition-colors">
                                 Ke Menu Transaksi
