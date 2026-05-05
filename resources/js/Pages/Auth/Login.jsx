@@ -15,8 +15,9 @@ export default function Login({ status, canResetPassword }) {
     const [isMounted, setIsMounted] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
-    // State untuk mengontrol Pop-up Informasi
+    // State untuk Animasi Welcome & Info Modal
     const [isInfoOpen, setIsInfoOpen] = useState(false);
+    const [showWelcome, setShowWelcome] = useState(false);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
@@ -25,43 +26,88 @@ export default function Login({ status, canResetPassword }) {
     });
 
     useEffect(() => {
-        // Trigger animasi saat komponen di-load
         setIsMounted(true);
         return () => reset('password');
     }, []);
 
     const submit = (e) => {
         e.preventDefault();
-        post(route('login'));
+
+        // 1. Munculkan Animasi Welcome saat tombol diklik
+        setShowWelcome(true);
+
+        post(route('login'), {
+            // 2. Jika gagal (password salah dll), tutup animasi agar user bisa coba lagi
+            onFinish: () => setShowWelcome(false),
+        });
     };
 
     return (
         <div className="h-screen w-full flex overflow-hidden bg-slate-900 font-sans selection:bg-blue-500 selection:text-white relative">
             <Head title="Portal Internal SANGGARA" />
 
+            {/* --- INLINE STYLES UNTUK ANIMASI KHUSUS --- */}
+            <style>{`
+                @keyframes slideLoad {
+                    0% { transform: translateX(-100%); }
+                    100% { transform: translateX(200%); }
+                }
+                .animate-slide-load {
+                    animation: slideLoad 1.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+                }
+            `}</style>
+
+            {/* =========================================================
+                WELCOME ANIMATION OVERLAY (MUNCUL SAAT LOGIN)
+            ========================================================= */}
+            <div className={`fixed inset-0 z-[200] flex flex-col items-center justify-center transition-all duration-700 ease-in-out ${showWelcome ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
+                {/* Background Gelap dengan Blur Ekstrem */}
+                <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-2xl"></div>
+
+                {/* Konten Animasi */}
+                <div className={`relative z-10 flex flex-col items-center transform transition-transform duration-1000 ${showWelcome ? 'scale-100 translate-y-0' : 'scale-90 translate-y-10'}`}>
+
+                    {/* Ring Spinner & Logo */}
+                    <div className="relative w-28 h-28 mb-8">
+                        <div className="absolute inset-0 border-t-4 border-b-4 border-blue-500 rounded-full animate-spin"></div>
+                        <div className="absolute inset-2 border-r-4 border-l-4 border-emerald-400 rounded-full animate-[spin_2s_linear_reverse]"></div>
+                        <div className="absolute inset-0 flex items-center justify-center bg-slate-900 rounded-full m-4 shadow-[0_0_30px_rgba(59,130,246,0.5)]">
+                            <svg className="w-8 h-8 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                        </div>
+                    </div>
+
+                    {/* Teks Sambutan */}
+                    <h2 className="text-4xl md:text-5xl font-black text-white tracking-widest uppercase mb-4 drop-shadow-lg">
+                        Welcome <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 animate-pulse">Back</span>
+                    </h2>
+
+                    <p className="text-blue-200/80 font-medium tracking-[0.3em] uppercase text-xs animate-pulse">
+                        Authenticating Administrator Data...
+                    </p>
+
+                    {/* Cyberpunk Loading Bar */}
+                    <div className="w-64 h-1 bg-slate-800 rounded-full mt-10 overflow-hidden relative shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+                        <div className="absolute top-0 left-0 h-full w-1/2 bg-gradient-to-r from-transparent via-blue-500 to-emerald-400 rounded-full animate-slide-load"></div>
+                    </div>
+                </div>
+            </div>
+
             {/* --- BAGIAN KIRI: BRANDING & VISUAL --- */}
             <section className="relative hidden lg:flex lg:w-[60%] h-full overflow-hidden shadow-2xl z-10">
-                {/* Background Image dengan Zoom Effect */}
                 <div
                     className={`absolute inset-0 bg-cover bg-center transition-transform duration-[15000ms] ease-linear ${isMounted ? 'scale-110' : 'scale-100'}`}
                     style={{ backgroundImage: "url('/login1.jpg')" }}
                 />
-
-                {/* Overlay Gradien (Lebih Gelap untuk Kontras) */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-slate-950 via-slate-900/80 to-blue-900/40" />
 
-                {/* --- PEMISAH LENGKUNG (CURVED DIVIDER) --- */}
-                {/* SVG ini menciptakan ilusi lengkungan mulus yang menyambung ke panel kanan */}
+                {/* PEMISAH LENGKUNG (CURVED DIVIDER) */}
                 <div className="absolute inset-y-0 right-0 w-32 text-slate-900 z-20 translate-x-[1px] pointer-events-none">
                     <svg className="h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" fill="currentColor">
-                        {/* Kurva bezier untuk lengkungan organik */}
                         <path d="M0 0 C 100 30, 100 70, 0 100 L 100 100 L 100 0 Z" />
                     </svg>
                 </div>
 
-                {/* Konten Internal Panel Kiri */}
                 <div className="relative z-10 w-full h-full flex flex-col justify-between p-20 pr-32">
-                    {/* Top Section: Logo */}
                     <div className={`transition-all duration-1000 delay-100 ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0'}`}>
                         <div className="flex items-center space-x-4 bg-white/5 backdrop-blur-md p-4 rounded-2xl border border-white/10 w-fit shadow-lg">
                             <img src="/pelindo.png" alt="Logo Pelindo" className="h-12 w-auto filter brightness-0 invert" />
@@ -73,7 +119,6 @@ export default function Login({ status, canResetPassword }) {
                         </div>
                     </div>
 
-                    {/* Middle Section: Main Titles */}
                     <div className="max-w-2xl">
                         <div className={`space-y-4 transition-all duration-1000 delay-300 ${isMounted ? 'translate-x-0 opacity-100' : '-translate-x-20 opacity-0'}`}>
                             <div className="flex items-center space-x-3">
@@ -95,7 +140,6 @@ export default function Login({ status, canResetPassword }) {
                         </div>
                     </div>
 
-                    {/* Bottom Section: Footer Info */}
                     <div className={`flex items-end justify-between transition-all duration-1000 delay-500 ${isMounted ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
                         <div className="text-slate-400 text-[10px] tracking-widest font-bold uppercase">
                             Maintenance by IT Department &copy; {new Date().getFullYear()}
@@ -107,26 +151,20 @@ export default function Login({ status, canResetPassword }) {
                     </div>
                 </div>
 
-                {/* Animated Light Beam */}
                 <div className="absolute -bottom-32 -left-32 w-[30rem] h-[30rem] bg-blue-600/20 rounded-full blur-[100px] pointer-events-none animate-pulse"></div>
             </section>
 
             {/* --- BAGIAN KANAN: AUTH FORM --- */}
             <section className="w-full lg:w-[40%] h-full flex items-center justify-center p-8 sm:p-12 lg:p-16 bg-slate-900 relative z-20">
-                {/* Background Decor (Only Mobile) */}
                 <div className="lg:hidden absolute inset-0 bg-[url('/login1.jpg')] bg-cover bg-center opacity-10"></div>
 
                 <div className={`w-full max-w-md relative z-10 transition-all duration-1000 delay-200 ${isMounted ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
-
-                    {/* Card Container */}
                     <div className="bg-slate-900/50 lg:bg-transparent backdrop-blur-xl lg:backdrop-blur-none p-10 rounded-[2.5rem] border border-white/5 lg:border-none shadow-2xl lg:shadow-none">
 
-                        {/* Mobile Logo */}
                         <div className="lg:hidden mb-10 flex justify-center">
                             <img src="/pelindo.png" alt="Logo" className="h-10 w-auto brightness-0 invert" />
                         </div>
 
-                        {/* Form Header dengan Tombol Pop-up Info */}
                         <header className="mb-10 flex items-start justify-between">
                             <div>
                                 <h3 className="text-4xl font-black text-white mb-2 tracking-tight">Sign In</h3>
@@ -136,14 +174,13 @@ export default function Login({ status, canResetPassword }) {
                                 </div>
                             </div>
 
-                            {/* TOMBOL INFO POP-UP */}
                             <button
                                 type="button"
                                 onClick={() => setIsInfoOpen(true)}
                                 className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-blue-400 hover:bg-blue-600 hover:text-white hover:border-blue-500 transition-all shadow-lg group focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900"
                                 title="Informasi Sistem"
                             >
-                                <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             </button>
                         </header>
 
@@ -155,7 +192,6 @@ export default function Login({ status, canResetPassword }) {
                         )}
 
                         <form onSubmit={submit} className="space-y-6">
-                            {/* Email Input */}
                             <div className="space-y-2 group">
                                 <InputLabel htmlFor="email" value="Email Address" className="text-slate-300 text-xs uppercase tracking-widest font-bold ml-1" />
                                 <div className="relative">
@@ -177,7 +213,6 @@ export default function Login({ status, canResetPassword }) {
                                 <InputError message={errors.email} className="mt-2 text-xs font-semibold text-red-400" />
                             </div>
 
-                            {/* Password Input */}
                             <div className="space-y-2 group">
                                 <div className="flex justify-between items-center ml-1">
                                     <InputLabel htmlFor="password" value="Password" className="text-slate-300 text-xs uppercase tracking-widest font-bold" />
@@ -216,7 +251,6 @@ export default function Login({ status, canResetPassword }) {
                                 <InputError message={errors.password} className="mt-2 text-xs font-semibold text-red-400" />
                             </div>
 
-                            {/* Remember Me */}
                             <div className="flex items-center pt-2">
                                 <label className="flex items-center cursor-pointer group">
                                     <Checkbox
@@ -229,20 +263,12 @@ export default function Login({ status, canResetPassword }) {
                                 </label>
                             </div>
 
-                            {/* Submit Button */}
                             <div className="pt-6">
                                 <PrimaryButton
                                     className="w-full h-14 flex justify-center items-center bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-bold text-lg rounded-2xl shadow-[0_10px_25px_rgba(37,99,235,0.3)] transform transition-all hover:-translate-y-1 active:scale-[0.98] disabled:opacity-50 disabled:transform-none border border-blue-500/50"
                                     disabled={processing}
                                 >
-                                    {processing ? (
-                                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                    ) : (
-                                        "MASUK SEKARANG"
-                                    )}
+                                    MASUK SEKARANG
                                 </PrimaryButton>
                             </div>
                         </form>
@@ -255,20 +281,15 @@ export default function Login({ status, canResetPassword }) {
             ========================================================= */}
             {isInfoOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-                    {/* Backdrop Overlay Gelap */}
                     <div
                         className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-300 cursor-pointer"
                         onClick={() => setIsInfoOpen(false)}
                     ></div>
 
-                    {/* Konten Modal Glassmorphism */}
                     <div className="relative w-full max-w-lg bg-slate-900/90 backdrop-blur-2xl border border-slate-700 rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden animate-in zoom-in-95 duration-300">
-
-                        {/* Decorative Top Bar */}
                         <div className="h-2 w-full bg-gradient-to-r from-blue-600 via-blue-400 to-emerald-400"></div>
 
                         <div className="p-8 sm:p-10">
-                            {/* Header Modal */}
                             <div className="flex justify-between items-start mb-6">
                                 <div className="flex items-center space-x-3">
                                     <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center text-blue-400">
@@ -287,7 +308,6 @@ export default function Login({ status, canResetPassword }) {
                                 </button>
                             </div>
 
-                            {/* Isi Informasi */}
                             <div className="space-y-6 text-sm text-slate-300 leading-relaxed">
                                 <p>
                                     <strong className="text-white font-bold">Sistem Anggaran dan Realisasi (SANGGARA)</strong> adalah platform internal yang didesain khusus untuk mengelola master data anggaran operasional.
@@ -311,7 +331,6 @@ export default function Login({ status, canResetPassword }) {
                                 </div>
                             </div>
 
-                            {/* Tombol Tutup Modal */}
                             <div className="mt-8 pt-6 border-t border-slate-800 flex justify-end">
                                 <button
                                     onClick={() => setIsInfoOpen(false)}
