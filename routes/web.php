@@ -6,7 +6,7 @@ use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\MasterAnggaranController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AiController;
-use App\Http\Controllers\ActivityLogController; // <-- Tambahan untuk Log Aktivitas
+use App\Http\Controllers\ActivityLogController;
 use Illuminate\Support\Facades\Route;
 
 // =====================================================================
@@ -34,6 +34,9 @@ Route::middleware('auth')->group(function () {
 
     // --- MENU 1: MASTER ANGGARAN (Tabel Consolidated Sheet) ---
     Route::get('/master-anggaran', [MasterAnggaranController::class, 'index'])->name('master-anggaran.index');
+    Route::post('/master-anggaran', [MasterAnggaranController::class, 'store'])->name('master-anggaran.store');
+    // Rute Hapus Master Anggaran (Baru ditambahkan)
+    Route::delete('/master-anggaran/{anggaran}', [MasterAnggaranController::class, 'destroy'])->name('master-anggaran.destroy');
 
     // --- FASE 5: Pelaporan & Ekspor Sheet ---
     // (PENTING: Route khusus 'export' harus berada di atas route berparameter)
