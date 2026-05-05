@@ -1,59 +1,89 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<div align="center">
+  <img src="/sanggara/login.png" alt="SANGGARA Login Portal" width="100%">
+  
+  <br />
 
+  # ⚓ SANGGARA (Sistem Anggaran & Realisasi Terintegrasi)
+
+  <p align="center">
+    <strong>Enterprise Financial & Budget Monitoring Portal</strong><br>
+    <em>Developed for PT Pelabuhan Indonesia (Pelindo) Regional 2 Teluk Bayur</em>
+  </p>
+
+  <p align="center">
+    <img src="https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel" />
+    <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+    <img src="https://img.shields.io/badge/Inertia.js-9553E9?style=for-the-badge&logo=inertia&logoColor=white" alt="Inertia" />
+    <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+    <img src="https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL" />
+  </p>
+</div>
+
+---
+
+## 📖 Tentang Projek
+
+**SANGGARA** adalah aplikasi *dashboard* finansial internal yang dirancang khusus untuk memonitor, mengelola, dan mengotomatisasi pengawasan Pagu Anggaran (Budget Ceiling) secara *real-time*. Sistem ini menggantikan pencatatan manual menjadi digitalisasi terpusat, memungkinkan manajemen untuk melacak *Commitment* (kontrak) dan *Actual* (realisasi pengeluaran) pada setiap Item Anggaran (Chart of Accounts / COA) dengan presisi tinggi.
+
+Aplikasi ini menggunakan pola **Master-Detail View** untuk mempercepat navigasi pengguna dan mengadopsi antarmuka **Glassmorphism** modern yang dilengkapi dengan fitur *Dark/Light Mode*.
+
+## ✨ Fitur Utama
+
+- **📊 Visualisasi Data & Analisis:** Grafik interaktif (Chart.js) untuk memantau kesehatan anggaran dan persentase penyerapan dana.
+- **🎯 Monitoring Realisasi Terintegrasi:** Indikator otomatis (Aman / Overbudget) berdasarkan kalkulasi sisa dana.
+- **💵 Manajemen Master Anggaran:** Sentralisasi data Pagu Anggaran per COA.
+- **📝 Input Transaksi Dinamis:** Pencatatan pengeluaran harian (*Running Balance*) dengan penghitungan saldo instan dan fitur Export ke Excel/CSV.
+- **🤖 AI Financial Analyst:** Integrasi *Artificial Intelligence* (Chatbox) untuk membantu analisis data secara prediktif.
+- **👥 Role & User Management:** Kontrol akses khusus untuk Administrator / JM SDM.
+- **📜 Log Aktivitas (Audit Trail):** Rekam jejak aktivitas (*Create, Update, Delete*) untuk keamanan data.
+
+---
+
+## 📸 Tampilan Sistem (Screenshots)
+
+### 🎛️ Dashboard Utama
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="/sanggara/dashboard.png" width="49%">
+  <img src="/sanggara/dashboard2.png" width="49%">
 </p>
 
-## About Laravel
+### 📈 Analisis & Monitoring
+<p align="center">
+  <img src="/sanggara/analisis.png" width="49%" alt="Analisis Grafik">
+  <img src="/sanggara/monitoring.png" width="49%" alt="Monitoring Realisasi">
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### 📋 Manajemen Anggaran & Transaksi (COA)
+<p align="center">
+  <img src="/sanggara/mainanggaran.png" width="49%" alt="Master Anggaran">
+  <img src="/sanggara/coa.png" width="49%" alt="Transaksi">
+</p>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### ⚙️ Manajemen Pengguna & Sistem
+<p align="center">
+  <img src="/sanggara/user.png" width="49%" alt="Kelola User">
+  <img src="/sanggara/log.png" width="49%" alt="Log Aktivitas">
+</p>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🛠️ Stack Teknologi
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Sistem ini dibangun dengan arsitektur *Monolith berbasis Inertia*, memberikan pengalaman *Single Page Application* (SPA) tanpa perlu membangun API terpisah.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Frontend:** React.js, Tailwind CSS, Chart.js
+- **Backend:** Laravel, PHP 8.x
+- **Bridge/Routing:** Inertia.js
+- **Database:** MySQL
+- **Build Tool:** Vite v8
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## 🚀 Panduan Instalasi (Lokal)
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+Ikuti langkah-langkah berikut untuk menjalankan SANGGARA di mesin lokal (Development Environment).
 
+**1. Clone Repositori**
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
-```
-
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# SANGGARA
+git clone [https://github.com/USERNAME_GITHUB_KAMU/sanggara.git](https://github.com/USERNAME_GITHUB_KAMU/sanggara.git)
+cd sanggara
