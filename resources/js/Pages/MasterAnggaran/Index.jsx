@@ -14,11 +14,14 @@ export default function MasterAnggaran({ auth, dataAnggaran }) {
     // ===============================================
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    // State untuk Pop-up Konfirmasi Delete
+    const [deleteModal, setDeleteModal] = useState({ show: false, id: null, name: '' });
+
     const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
         kode_coa: '',
         nama_item: '',
         original_budget: '',
-        unreleased_persen: '30', // Default awal sesuai standar Pelindo
+        unreleased_persen: '30', // Default awal sesuai standar
     });
 
     const openModal = () => setIsModalOpen(true);
@@ -37,14 +40,90 @@ export default function MasterAnggaran({ auth, dataAnggaran }) {
     };
 
     // ===============================================
-    // FUNGSI HAPUS DATA
+    // FUNGSI HAPUS DATA (DENGAN POP-UP CUSTOM)
     // ===============================================
-    const handleDelete = (id, name) => {
-        if (confirm(`⚠️ PERINGATAN: Apakah Anda yakin ingin menghapus COA "${name}"? Seluruh data transaksi terkait COA ini akan ikut terhapus secara permanen.`)) {
-            router.delete(route('master-anggaran.destroy', id), {
-                preserveScroll: true
-            });
+    const triggerDelete = (id, name) => {
+        // Membuka modal konfirmasi hapus
+        setDeleteModal({ show: true, id, name });
+    };
+
+    const confirmDelete = () => {
+        // Mengeksekusi penghapusan setelah dikonfirmasi "Ya"
+        router.delete(route('master-anggaran.destroy', deleteModal.id), {
+            preserveScroll: true,
+            onSuccess: () => setDeleteModal({ show: false, id: null, name: '' })
+        });
+    };
+
+    const cancelDelete = () => {
+        // Menutup modal tanpa menghapus
+        setDeleteModal({ show: false, id: null, name: '' });
+    };
+
+    // ===============================================
+    // FUNGSI EXPORT KE EXCEL / SPREADSHEET (CSV)
+    // ===============================================
+    const handleExport = () => {
+        if (!dataAnggaran || dataAnggaran.length === 0) {
+            alert('Tidak ada data untuk di-export.');
+            return;
         }
+
+        // 1. Definisi Header Kolom Excel (Update: Consumable Budget)
+        const headers = [
+            'No',
+            'Kode COA',
+            'Nama Item',
+            'Original Budget (Rp)',
+            'Unreleased (%)',
+            'Unreleased (Rp)',
+            'Consumable Budget (Rp)',
+            'Commitment (Rp)',
+            'Actual (Rp)',
+            'Total Realisasi (Rp)',
+            'Sisa Consumable Budget (Rp)',
+            '% Terpakai Consumable',
+            'Status Consumable',
+            'Sisa 100% Original (Rp)',
+            '% Terpakai 100%',
+            'Status 100%'
+        ];
+
+        // 2. Mapping Data ke format Baris CSV
+        const rows = dataAnggaran.map((row, index) => [
+            index + 1,
+            `"${row.kodeCoa}"`, // Tanda kutip ganda mencegah Excel mengubah format angka jadi scientific
+            `"${row.itemName}"`, // Tanda kutip mencegah error jika ada koma di nama item
+            row.originalBudget,
+            row.unreleasedPersen,
+            row.unreleasedRp,
+            row.consumableBudget,
+            row.commitment,
+            row.actual,
+            row.realisasiTotal,
+            row.sisaConsumable,
+            row.persenConsumable,
+            row.statusConsumable,
+            row.sisa100,
+            row.persen100,
+            row.status100
+        ]);
+
+        // 3. Gabungkan Header dan Baris
+        const csvContent = [
+            headers.join(','),
+            ...rows.map(e => e.join(','))
+        ].join('\n');
+
+        // 4. Proses Download Otomatis dengan BOM (Byte Order Mark) untuk encoding UTF-8 di Excel
+        const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `Master_Anggaran_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     const renderBadge = (status) => {
@@ -71,8 +150,8 @@ export default function MasterAnggaran({ auth, dataAnggaran }) {
 
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
                 {/* TOP BAR / INFO */}
-                <div className="bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-white/5 rounded-xl shadow-sm p-4 flex justify-between items-center backdrop-blur-sm">
-                    <div className="flex items-start space-x-3">
+                <div className="bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-white/5 rounded-xl shadow-sm p-4 flex flex-col sm:flex-row justify-between items-center backdrop-blur-sm gap-4">
+                    <div className="flex items-start space-x-3 w-full sm:w-auto">
                         <div className="mt-1 relative flex h-3 w-3">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
@@ -82,15 +161,30 @@ export default function MasterAnggaran({ auth, dataAnggaran }) {
                             <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Kelola data COA Master dan Pagu Original Pelindo.</p>
                         </div>
                     </div>
-                    <button
-                        onClick={openModal}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-md transition-all text-sm flex items-center group"
-                    >
-                        <svg className="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Setup COA Baru
-                    </button>
+
+                    {/* ACTION BUTTONS */}
+                    <div className="flex w-full sm:w-auto space-x-2">
+                        {/* Tombol Export Excel */}
+                        <button
+                            onClick={handleExport}
+                            className="flex-1 sm:flex-none px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-md transition-all text-sm flex items-center justify-center group"
+                        >
+                            <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Export Excel
+                        </button>
+
+                        <button
+                            onClick={openModal}
+                            className="flex-1 sm:flex-none px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-md transition-all text-sm flex items-center justify-center group"
+                        >
+                            <svg className="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Setup COA Baru
+                        </button>
+                    </div>
                 </div>
 
                 {/* TABEL DATA MASTER */}
@@ -102,6 +196,7 @@ export default function MasterAnggaran({ auth, dataAnggaran }) {
                                     <th colSpan="3" className="border border-slate-300 dark:border-slate-700 py-3 px-3 font-black uppercase tracking-wider bg-slate-100 dark:bg-slate-800">Funds Center / Item</th>
                                     <th colSpan="4" className="border border-slate-300 dark:border-slate-700 py-3 px-3 font-black uppercase tracking-wider bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300">Struktur Pagu Anggaran</th>
                                     <th colSpan="3" className="border border-slate-300 dark:border-slate-700 py-3 px-3 font-black uppercase tracking-wider bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300">Realisasi Harian</th>
+                                    {/* UPDATE: Analisis Consumable Budget */}
                                     <th colSpan="3" className="border border-slate-300 dark:border-slate-700 py-3 px-3 font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-300">Analisis Consumable Budget</th>
                                     <th colSpan="3" className="border border-slate-300 dark:border-slate-700 py-3 px-3 font-black uppercase tracking-wider bg-purple-50 dark:bg-purple-900/20 text-purple-800 dark:text-purple-300">Analisis 100% (Original)</th>
                                     <th rowSpan="2" className="border border-slate-300 dark:border-slate-700 py-3 px-3 font-black bg-slate-100 dark:bg-slate-800 w-20">Aksi</th>
@@ -113,11 +208,13 @@ export default function MasterAnggaran({ auth, dataAnggaran }) {
                                     <th className="border border-slate-300 dark:border-slate-700 py-2 px-3 font-bold min-w-[130px]">Original Budget</th>
                                     <th className="border border-slate-300 dark:border-slate-700 py-2 px-3 font-bold min-w-[100px]">Unreleased (%)</th>
                                     <th className="border border-slate-300 dark:border-slate-700 py-2 px-3 font-bold min-w-[130px]">Unreleased (Rp)</th>
+                                    {/* UPDATE: Consumable Budget */}
                                     <th className="border border-slate-300 dark:border-slate-700 py-2 px-3 font-bold min-w-[130px] bg-blue-100/50 dark:bg-blue-900/30">Consumable Budget</th>
                                     <th className="border border-slate-300 dark:border-slate-700 py-2 px-3 font-bold min-w-[120px]">Commitment</th>
                                     <th className="border border-slate-300 dark:border-slate-700 py-2 px-3 font-bold min-w-[120px]">Actual</th>
                                     <th className="border border-slate-300 dark:border-slate-700 py-2 px-3 font-bold min-w-[130px]">Total Realisasi</th>
-                                    <th className="border border-slate-300 dark:border-slate-700 py-2 px-3 font-bold min-w-[130px] bg-emerald-100/50 dark:bg-emerald-900/30 text-emerald-900 dark:text-emerald-300">SISA Anggaran</th>
+                                    {/* UPDATE: SISA Consumable */}
+                                    <th className="border border-slate-300 dark:border-slate-700 py-2 px-3 font-bold min-w-[130px] bg-emerald-100/50 dark:bg-emerald-900/30 text-emerald-900 dark:text-emerald-300">SISA Consumable</th>
                                     <th className="border border-slate-300 dark:border-slate-700 py-2 px-2 font-bold w-20">% Terpakai</th>
                                     <th className="border border-slate-300 dark:border-slate-700 py-2 px-2 font-bold w-20">Status</th>
                                     <th className="border border-slate-300 dark:border-slate-700 py-2 px-3 font-bold min-w-[130px] bg-purple-100/50 dark:bg-purple-900/30 text-purple-900 dark:text-purple-300">SISA 100%</th>
@@ -151,8 +248,9 @@ export default function MasterAnggaran({ auth, dataAnggaran }) {
                                             <td className="border border-slate-300 dark:border-slate-700 py-2 px-2 text-center">{renderBadge(row.status100)}</td>
 
                                             <td className="border border-slate-300 dark:border-slate-700 py-2 px-2 text-center">
+                                                {/* UPDATE: Menggunakan Trigger Custom Modal */}
                                                 <button
-                                                    onClick={() => handleDelete(row.id, row.itemName)}
+                                                    onClick={() => triggerDelete(row.id, row.itemName)}
                                                     className="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm opacity-0 group-hover:opacity-100"
                                                     title="Hapus COA Master"
                                                 >
@@ -174,7 +272,9 @@ export default function MasterAnggaran({ auth, dataAnggaran }) {
                 </div>
             </div>
 
-            {/* POPUP MODAL INPUT COA MASTER */}
+            {/* =======================================================
+                POPUP MODAL INPUT COA MASTER
+            ======================================================= */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm">
                     <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden animate-in zoom-in-95 duration-200">
@@ -256,7 +356,8 @@ export default function MasterAnggaran({ auth, dataAnggaran }) {
                                             <span className="font-bold text-red-500">- {formatNumber((data.original_budget * (data.unreleased_persen || 0)) / 100)}</span>
                                         </div>
                                         <div className="flex justify-between text-sm text-slate-800 dark:text-white pt-2 border-t border-blue-200/50 dark:border-blue-800/50 items-center">
-                                            <span className="font-black text-[10px] uppercase">Budget Release:</span>
+                                            {/* UPDATE: Consumable Budget */}
+                                            <span className="font-black text-[10px] uppercase">Consumable Budget:</span>
                                             <span className="font-black text-emerald-600 text-base">{formatNumber(data.original_budget - ((data.original_budget * (data.unreleased_persen || 0)) / 100))}</span>
                                         </div>
                                     </div>
@@ -271,6 +372,39 @@ export default function MasterAnggaran({ auth, dataAnggaran }) {
                     </div>
                 </div>
             )}
+
+            {/* =======================================================
+                POPUP KONFIRMASI HAPUS DATA (CUSTOM MODAL)
+            ======================================================= */}
+            {deleteModal.show && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-sm shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden animate-in zoom-in-95 duration-200">
+                        <div className="p-6 text-center space-y-4">
+                            <div className="w-20 h-20 bg-red-100 dark:bg-red-500/20 text-red-600 rounded-full flex items-center justify-center mx-auto mb-2 animate-bounce">
+                                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                            </div>
+                            <h3 className="font-black text-2xl text-slate-800 dark:text-white uppercase tracking-tighter">Konfirmasi Hapus</h3>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                                Apakah Anda yakin ingin menghapus COA <br/>
+                                <span className="font-black text-lg text-slate-700 dark:text-slate-200 text-center block mt-2">"{deleteModal.name}"?</span>
+                            </p>
+                            <p className="text-xs text-red-500 font-bold bg-red-50 dark:bg-red-500/10 p-2 rounded-lg mt-2">
+                                Seluruh data transaksi (Commitment & Actual) terkait COA ini akan ikut terhapus permanen!
+                            </p>
+
+                            <div className="flex space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800 mt-6">
+                                <button onClick={cancelDelete} className="flex-1 py-3.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-black rounded-2xl transition-all text-xs uppercase tracking-widest">
+                                    Batalkan
+                                </button>
+                                <button onClick={confirmDelete} className="flex-1 py-3.5 bg-red-600 hover:bg-red-700 text-white font-black rounded-2xl transition-all text-xs uppercase tracking-widest shadow-lg shadow-red-500/30">
+                                    Ya, Hapus!
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </AuthenticatedLayout>
     );
 }
