@@ -12,68 +12,78 @@ use Inertia\Inertia;
 
 class TransaksiController extends Controller
 {
-    // Menampilkan Halaman Tabel Transaksi
+    /**
+     * Menampilkan Halaman Tabel Transaksi dengan Logika Saldo (Running Balance)
+     */
     public function index(Request $request)
     {
-        // 1. Ambil semua COA untuk Dropdown Filter
+        // 1. Ambil semua Master Anggaran untuk Dropdown Filter
         $anggarans = Anggaran::all();
 
-        // 2. Ambil ID Anggaran dari request filter (Default ke COA pertama jika kosong)
+        // 2. Ambil ID Anggaran dari filter (Default ke data pertama jika belum dipilih)
         $selectedId = $request->query('anggaran_id', $anggarans->first()?->id);
 
-        // 3. Ambil data Transaksi berdasarkan filter COA
+        // 3. Ambil data Transaksi
+        // Penting: Urutan ASC (Tanggal & ID) agar kalkulasi sisa anggaran di frontend konsisten
         $transaksis = Transaksi::with('anggaran')
             ->when($selectedId, function ($query, $id) {
                 return $query->where('anggaran_id', $id);
             })
-            ->latest()
+            ->orderBy('tanggal', 'asc')
+            ->orderBy('id', 'asc')
             ->get();
 
-        // 4. Hitung Sisa Anggaran Terkini untuk COA yang dipilih
+        // 4. Kalkulasi Consumable Budget (Original - Unreleased %) dari Master sebagai saldo awal
         $selectedAnggaran = Anggaran::find($selectedId);
         $consumableBudget = 0;
-        $sisaAnggaranTerkini = 0;
 
         if ($selectedAnggaran) {
-            $unreleasedRp = ($selectedAnggaran->original_budget * $selectedAnggaran->unreleased_persen) / 100;
-            $consumableBudget = $selectedAnggaran->original_budget - $unreleasedRp;
+            $original = (float) $selectedAnggaran->original_budget;
+            $persenUnreleased = (float) $selectedAnggaran->unreleased_persen;
 
-            $totalRealisasi = $transaksis->sum('nominal_commitment') + $transaksis->sum('nominal_realisasi');
-            $sisaAnggaranTerkini = $consumableBudget - $totalRealisasi;
+            $unreleasedRp = ($original * $persenUnreleased) / 100;
+            $consumableBudget = $original - $unreleasedRp;
         }
 
+        // 5. Kirim data ke Frontend React
         return Inertia::render('Transaksi/Index', [
             'transaksis' => $transaksis,
             'anggarans' => $anggarans,
             'selectedId' => (int) $selectedId,
             'consumableBudget' => (float) $consumableBudget,
-            'sisaAnggaranTerkini' => (float) $sisaAnggaranTerkini
         ]);
     }
 
-    // Menyimpan Baris Transaksi Baru
+    /**
+     * Menyimpan Baris Transaksi Realisasi Baru
+     */
     public function store(Request $request)
     {
+        // Validasi input termasuk kolom 'rincian' yang baru
         $validated = $request->validate([
-            'anggaran_id' => 'required|exists:anggarans,id',
-            'tanggal' => 'required|date',
-            'keterangan' => 'required|string|max:255',
-            'nominal_commitment' => 'required|numeric|min:0', // Ditambahkan
-            'nominal_realisasi' => 'required|numeric|min:0',
+            'anggaran_id'        => 'required|exists:anggarans,id',
+            'tanggal'            => 'required|date',
+            'keterangan'         => 'required|string|max:255',
+            'rincian'            => 'required|string|max:100', // Kolom baru sesuai Excel
+            'nominal_commitment' => 'required|numeric|min:0',
+            'nominal_realisasi'  => 'required|numeric|min:0',
         ]);
 
         Transaksi::create($validated);
 
-        return redirect()->back()->with('message', 'Transaksi berhasil ditambahkan.');
+        return redirect()->back()->with('message', 'Data realisasi berhasil diposting.');
     }
 
-    // Auto-Kalkulasi & Edit Sel Langsung
+    /**
+     * Update data transaksi (Support Inline Editing)
+     */
     public function update(Request $request, Transaksi $transaksi)
     {
         $validated = $request->validate([
-            'keterangan' => 'sometimes|required|string|max:255',
-            'nominal_commitment' => 'sometimes|required|numeric|min:0', // Ditambahkan
-            'nominal_realisasi' => 'sometimes|required|numeric|min:0',
+            'keterangan'         => 'sometimes|required|string|max:255',
+            'rincian'            => 'sometimes|required|string|max:100',
+            'nominal_commitment' => 'sometimes|required|numeric|min:0',
+            'nominal_realisasi'  => 'sometimes|required|numeric|min:0',
         ]);
 
         $transaksi->update($validated);
@@ -81,16 +91,20 @@ class TransaksiController extends Controller
         return redirect()->back();
     }
 
-    // Menghapus Transaksi
+    /**
+     * Menghapus baris transaksi
+     */
     public function destroy(Transaksi $transaksi)
     {
         $transaksi->delete();
-        return redirect()->back()->with('message', 'Transaksi dihapus.');
+        return redirect()->back()->with('message', 'Baris transaksi telah dihapus.');
     }
 
-    // Ekspor Data ke Excel
+    /**
+     * Ekspor Data ke Excel (Fase 5)
+     */
     public function export()
     {
-        return back()->with('message', 'Sistem Ekspor sedang dalam maintenance.');
+        return back()->with('message', 'Fitur ekspor sedang disiapkan oleh tim IT.');
     }
 }
