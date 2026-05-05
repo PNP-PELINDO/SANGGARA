@@ -2,13 +2,14 @@ import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 
-export default function MasterAnggaran({ auth }) {
+export default function MasterAnggaran({ auth, dataAnggaran }) {
+    // Format angka ke format Rupiah standar Indonesia
     const formatNumber = (angka) => new Intl.NumberFormat('id-ID').format(angka || 0);
 
     const renderBadge = (status) => {
         let colorClass = '';
         if (status === 'Over' || status === 'Red') colorClass = 'bg-red-500 text-white';
-        else if (status === 'Warn') colorClass = 'bg-yellow-500 text-white';
+        else if (status === 'Warn') colorClass = 'bg-amber-500 text-white';
         else if (status === 'Safe') colorClass = 'bg-emerald-500 text-white';
         else colorClass = 'bg-slate-300 text-slate-800 dark:bg-slate-700 dark:text-slate-300';
 
@@ -41,12 +42,15 @@ export default function MasterAnggaran({ auth }) {
                             <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                         </div>
                         <div>
-                            <h4 className="font-bold text-slate-800 dark:text-slate-100 text-sm">Terhubung ke Google Sheets API</h4>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Terakhir di-update: 2026-10-15 14:30</p>
+                            <h4 className="font-bold text-slate-800 dark:text-slate-100 text-sm">Terhubung ke Database Lokal</h4>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Live Data SANGGARA</p>
                         </div>
                     </div>
-                    <button className="flex items-center px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg shadow-md transition-all text-sm group">
-                        Sync to Google Sheets
+                    <button className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-md transition-all text-sm group">
+                        <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Tambah COA Baru
                     </button>
                 </div>
 
@@ -80,36 +84,44 @@ export default function MasterAnggaran({ auth }) {
                                 </tr>
                             </thead>
                             <tbody className="bg-white dark:bg-slate-900">
-                                {mockData.map((row, index) => (
-                                    <tr key={index} className="hover:bg-blue-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                                        <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-2 text-center text-slate-500 dark:text-slate-400 font-medium">
-                                            {String(row.no).padStart(2, '0')}
-                                        </td>
-                                        <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-3 font-semibold text-slate-700 dark:text-slate-200">{row.itemName}</td>
-                                        <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-3 text-slate-500 dark:text-slate-400">{row.description}</td>
-                                        <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-3 text-right text-slate-700 dark:text-slate-300">{formatNumber(row.totalPagu)}</td>
-                                        <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-3 text-right text-slate-700 dark:text-slate-300">{formatNumber(row.awal)}</td>
-                                        <td className={`border border-slate-300 dark:border-slate-700 py-1.5 px-3 text-right ${row.revisiRed || isNegativeOrAlert(row.revisi) ? 'bg-red-200/60 text-red-800 dark:bg-red-500/20 dark:text-red-400 font-medium' : 'text-slate-700 dark:text-slate-300'}`}>
-                                            {formatNumber(row.revisi)}
-                                        </td>
-                                        <td className={`border border-slate-300 dark:border-slate-700 py-1.5 px-3 text-right ${row.hutangRed ? 'bg-red-200/60 text-red-800 dark:bg-red-500/20 dark:text-red-400 font-medium' : 'text-slate-700 dark:text-slate-300'}`}>
-                                            {formatNumber(row.hutangVendor)}
-                                        </td>
-                                        <td className={`border border-slate-300 dark:border-slate-700 py-1.5 px-3 text-right ${row.sisaRed || isNegativeOrAlert(row.sisaKontrak) ? 'bg-red-200/60 text-red-800 dark:bg-red-500/20 dark:text-red-400 font-medium' : 'text-slate-700 dark:text-slate-300'}`}>
-                                            {formatNumber(row.sisaKontrak)}
-                                        </td>
-                                        <td className={`border border-slate-300 dark:border-slate-700 py-1.5 px-3 text-right ${row.uangMukaRed || isNegativeOrAlert(row.uangMuka) ? 'bg-red-200/60 text-red-800 dark:bg-red-500/20 dark:text-red-400 font-medium' : 'text-slate-700 dark:text-slate-300'}`}>
-                                            {formatNumber(row.uangMuka)}
-                                        </td>
-                                        <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-2 text-center text-slate-700 dark:text-slate-300">{row.terpakai70}%</td>
-                                        <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-2 text-center">{renderBadge(row.status70)}</td>
-                                        <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-2 text-center text-slate-700 dark:text-slate-300">{row.terpakai100}%</td>
-                                        <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-2 text-center">{renderBadge(row.status100)}</td>
-                                        <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-2 text-center text-slate-400">
-                                            Aksi
+                                {dataAnggaran && dataAnggaran.length > 0 ? (
+                                    dataAnggaran.map((row, index) => (
+                                        <tr key={row.id} className="hover:bg-blue-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                                            <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-2 text-center text-slate-500 dark:text-slate-400 font-medium">
+                                                {String(row.no).padStart(2, '0')}
+                                            </td>
+                                            <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-3 font-bold text-slate-700 dark:text-slate-200">{row.itemName}</td>
+                                            <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-3 text-slate-500 dark:text-slate-400">{row.description}</td>
+                                            <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-3 text-right font-semibold text-slate-800 dark:text-slate-300">{formatNumber(row.totalPagu)}</td>
+                                            <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-3 text-right text-slate-600 dark:text-slate-400">{formatNumber(row.awal)}</td>
+                                            <td className={`border border-slate-300 dark:border-slate-700 py-1.5 px-3 text-right ${isNegativeOrAlert(row.revisi) ? 'bg-red-200/60 text-red-800' : 'text-slate-600 dark:text-slate-400'}`}>
+                                                {formatNumber(row.revisi)}
+                                            </td>
+                                            <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-3 text-right font-medium text-red-600 dark:text-red-400">
+                                                {formatNumber(row.hutangVendor)}
+                                            </td>
+                                            <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-3 text-right text-slate-600 dark:text-slate-400">
+                                                {formatNumber(row.sisaKontrak)}
+                                            </td>
+                                            <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-3 text-right font-medium text-amber-600 dark:text-amber-400">
+                                                {formatNumber(row.uangMuka)}
+                                            </td>
+                                            <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-2 text-center font-bold text-slate-700 dark:text-slate-300">{row.terpakai70}%</td>
+                                            <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-2 text-center">{renderBadge(row.status70)}</td>
+                                            <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-2 text-center font-bold text-slate-700 dark:text-slate-300">{row.terpakai100}%</td>
+                                            <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-2 text-center">{renderBadge(row.status100)}</td>
+                                            <td className="border border-slate-300 dark:border-slate-700 py-1.5 px-2 text-center">
+                                                <button className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-bold text-[10px] uppercase">Detail</button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="14" className="text-center py-8 text-slate-500 font-medium">
+                                            Belum ada data Master Anggaran.
                                         </td>
                                     </tr>
-                                ))}
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -118,8 +130,3 @@ export default function MasterAnggaran({ auth }) {
         </AuthenticatedLayout>
     );
 }
-
-const mockData = [
-    { no: 1, itemName: 'Item Name 1', description: 'Description', totalPagu: 2000000, awal: 1000000, revisi: 500000, revisiRed: true, hutangVendor: 0, sisaKontrak: 450000, uangMuka: 450000, terpakai70: 70, status70: 'Over', terpakai100: 80, status100: 'Over' },
-    { no: 2, itemName: 'Item Name 2', description: 'Description', totalPagu: 950000, awal: 980000, revisi: 200000, hutangVendor: 0, sisaKontrak: 200000, uangMuka: 200000, terpakai70: 80, status70: 'Red', terpakai100: 100, status100: 'Safe' },
-];

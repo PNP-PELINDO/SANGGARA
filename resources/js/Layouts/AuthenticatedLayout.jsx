@@ -116,7 +116,7 @@ export default function AuthenticatedLayout({ user, header, children }) {
                         <SidebarGroupHeader label="Data & Aktivitas" />
                         <div className="space-y-2 mt-3">
                             <SidebarLink href={route('users.index')} active={route().current('users.*')} icon="users" label="Kelola User" />
-                            <SidebarLink href="#" active={false} icon="log" label="Log Aktivitas" />
+                            <SidebarLink href={route('activity-log.index')} active={route().current('activity-log.*')} icon="log" label="Log Aktivitas" />
                         </div>
                     </div>
                 </nav>

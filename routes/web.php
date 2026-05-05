@@ -5,6 +5,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\MasterAnggaranController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AiController;
+use App\Http\Controllers\ActivityLogController; // <-- Tambahan untuk Log Aktivitas
 use Illuminate\Support\Facades\Route;
 
 // =====================================================================
@@ -54,6 +56,12 @@ Route::middleware('auth')->group(function () {
         auth()->user()->unreadNotifications->markAsRead();
         return redirect()->back();
     })->name('notifications.read');
+
+    // --- AI ANALYST (GEMINI API) ---
+    Route::post('/ai/analyze-budget', [AiController::class, 'analyzeBudget'])->name('ai.analyze');
+
+    // --- LOG AKTIVITAS ---
+    Route::get('/activity-log', [ActivityLogController::class, 'index'])->name('activity-log.index');
 
 });
 

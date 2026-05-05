@@ -6,15 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaksi extends Model
 {
-    // Tambahkan property $fillable untuk mengizinkan mass assignment
-    protected $fillable = [
-        'anggaran_id',
-        'tanggal',
-        'keterangan',
-        'nominal_realisasi',
-    ];
+    protected $fillable = ['anggaran_id', 'tanggal', 'keterangan', 'nominal_commitment', 'nominal_realisasi'];
 
-    // Hubungan ke model Anggaran
+    // Satu Transaksi MILIK SATU Anggaran
     public function anggaran()
     {
         return $this->belongsTo(Anggaran::class);
