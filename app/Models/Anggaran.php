@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Anggaran extends Model
 {
-    protected $fillable = ['kode_coa', 'nama_item', 'total_anggaran', 'kategori'];
+    // Pastikan 'kategori' sudah dihapus dari sini
+    protected $fillable = ['kode_coa', 'nama_item', 'original_budget', 'unreleased_persen'];
 
-    // Satu Anggaran punya BANYAK Transaksi
     public function transaksis()
     {
         return $this->hasMany(Transaksi::class);
