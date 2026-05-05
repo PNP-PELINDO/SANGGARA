@@ -3,10 +3,10 @@
   
   <br />
 
-  # ⚓ SANGGARA (Sistem Anggaran & Realisasi Terintegrasi)
+  # SANGGARA (Sistem Anggaran & Realisasi Terintegrasi)
 
   <p align="center">
-    <strong>Enterprise Financial & Budget Monitoring Portal</strong><br>
+    <strong>Enterprise Financial & Budget Monitoring System</strong><br>
     <em>Developed for PT Pelabuhan Indonesia (Pelindo) Regional 2 Teluk Bayur</em>
   </p>
 
@@ -21,69 +21,69 @@
 
 ---
 
-## 📖 Tentang Projek
+## System Overview
 
-**SANGGARA** adalah aplikasi *dashboard* finansial internal yang dirancang khusus untuk memonitor, mengelola, dan mengotomatisasi pengawasan Pagu Anggaran (Budget Ceiling) secara *real-time*. Sistem ini menggantikan pencatatan manual menjadi digitalisasi terpusat, memungkinkan manajemen untuk melacak *Commitment* (kontrak) dan *Actual* (realisasi pengeluaran) pada setiap Item Anggaran (Chart of Accounts / COA) dengan presisi tinggi.
+**SANGGARA** adalah platform *dashboard* finansial internal tingkat korporasi yang dirancang untuk memantau, mengelola, dan mengotomatisasi pengawasan Pagu Anggaran (*Budget Ceiling*) secara komprehensif dan *real-time*. Sistem ini mentransformasi proses pencatatan konvensional menjadi infrastruktur digital terpusat, memungkinkan pihak manajemen untuk melacak *Commitment* (nilai kontrak) dan *Actual* (realisasi pengeluaran) pada setiap *Chart of Accounts* (COA) dengan presisi tingkat tinggi.
 
-Aplikasi ini menggunakan pola **Master-Detail View** untuk mempercepat navigasi pengguna dan mengadopsi antarmuka **Glassmorphism** modern yang dilengkapi dengan fitur *Dark/Light Mode*.
+Aplikasi ini diimplementasikan menggunakan arsitektur **Master-Detail View** guna mengoptimalkan efisiensi navigasi pengguna, dipadukan dengan antarmuka **Glassmorphism** berstandar modern serta fungsionalitas *Dark/Light Mode* dinamis untuk kenyamanan operasional.
 
-## ✨ Fitur Utama
+## Core Features
 
-- **📊 Visualisasi Data & Analisis:** Grafik interaktif (Chart.js) untuk memantau kesehatan anggaran dan persentase penyerapan dana.
-- **🎯 Monitoring Realisasi Terintegrasi:** Indikator otomatis (Aman / Overbudget) berdasarkan kalkulasi sisa dana.
-- **💵 Manajemen Master Anggaran:** Sentralisasi data Pagu Anggaran per COA.
-- **📝 Input Transaksi Dinamis:** Pencatatan pengeluaran harian (*Running Balance*) dengan penghitungan saldo instan dan fitur Export ke Excel/CSV.
-- **🤖 AI Financial Analyst:** Integrasi *Artificial Intelligence* (Chatbox) untuk membantu analisis data secara prediktif.
-- **👥 Role & User Management:** Kontrol akses khusus untuk Administrator / JM SDM.
-- **📜 Log Aktivitas (Audit Trail):** Rekam jejak aktivitas (*Create, Update, Delete*) untuk keamanan data.
-
----
-
-## 📸 Tampilan Sistem (Screenshots)
-
-### 🎛️ Dashboard Utama
-<p align="center">
-  <img src="/sanggara/dashboard.png" width="49%">
-  <img src="/sanggara/dashboard2.png" width="49%">
-</p>
-
-### 📈 Analisis & Monitoring
-<p align="center">
-  <img src="/sanggara/analisis.png" width="49%" alt="Analisis Grafik">
-  <img src="/sanggara/monitoring.png" width="49%" alt="Monitoring Realisasi">
-</p>
-
-### 📋 Manajemen Anggaran & Transaksi (COA)
-<p align="center">
-  <img src="/sanggara/mainanggaran.png" width="49%" alt="Master Anggaran">
-  <img src="/sanggara/coa.png" width="49%" alt="Transaksi">
-</p>
-
-### ⚙️ Manajemen Pengguna & Sistem
-<p align="center">
-  <img src="/sanggara/user.png" width="49%" alt="Kelola User">
-  <img src="/sanggara/log.png" width="49%" alt="Log Aktivitas">
-</p>
+- **Visualisasi Data & Analitika:** Implementasi grafik interaktif (Chart.js) untuk evaluasi kesehatan metrik anggaran dan persentase penyerapan secara akurat.
+- **Monitoring Realisasi Terintegrasi:** Sistem indikator otomatis berbasis kalkulasi saldo untuk membedakan status kelayakan anggaran (Terkendali / *Overbudget*).
+- **Manajemen Master Anggaran:** Sentralisasi dan pemeliharaan basis data Pagu Anggaran secara terstruktur per COA.
+- **Input Transaksi Dinamis:** Sistem pencatatan pengeluaran (*Running Balance*) terotomatisasi dengan perhitungan saldo instan, dilengkapi kapabilitas ekstraksi pelaporan (Export to Excel/CSV).
+- **AI Financial Analyst:** Integrasi *Artificial Intelligence* guna memfasilitasi analisis data historis dan penyusunan strategi finansial secara interaktif.
+- **Role-Based Access Control (RBAC):** Manajemen otorisasi dan hierarki pengguna secara spesifik (Administrator / JM SDM).
+- **Sistem Audit Trail:** Perekaman rekam jejak aktivitas operasional (*Create, Update, Delete*) secara terperinci guna memastikan integritas dan akuntabilitas data.
 
 ---
 
-## 🛠️ Stack Teknologi
+## System Interface
 
-Sistem ini dibangun dengan arsitektur *Monolith berbasis Inertia*, memberikan pengalaman *Single Page Application* (SPA) tanpa perlu membangun API terpisah.
+### Main Dashboard
+<p align="center">
+  <img src="/sanggara/dashboard.png" width="49%" alt="Main Dashboard 1">
+  <img src="/sanggara/dashboard2.png" width="49%" alt="Main Dashboard 2">
+</p>
+
+### Analytics & Monitoring
+<p align="center">
+  <img src="/sanggara/analisis.png" width="49%" alt="Analytics Chart">
+  <img src="/sanggara/monitoring.png" width="49%" alt="Real-time Monitoring">
+</p>
+
+### Budget & Transaction Management (COA)
+<p align="center">
+  <img src="/sanggara/mainanggaran.png" width="49%" alt="Master Budget">
+  <img src="/sanggara/coa.png" width="49%" alt="Transaction List">
+</p>
+
+### User & System Administration
+<p align="center">
+  <img src="/sanggara/user.png" width="49%" alt="User Management">
+  <img src="/sanggara/log.png" width="49%" alt="Audit Log">
+</p>
+
+---
+
+## Technology Stack
+
+Sistem ini dikembangkan menggunakan arsitektur *Monolith* berbasis Inertia, memberikan performa optimal setara *Single Page Application* (SPA) dengan keamanan *backend* yang solid.
 
 - **Frontend:** React.js, Tailwind CSS, Chart.js
 - **Backend:** Laravel, PHP 8.x
-- **Bridge/Routing:** Inertia.js
+- **Routing & Data Bridge:** Inertia.js
 - **Database:** MySQL
-- **Build Tool:** Vite v8
+- **Build System:** Vite v8
 
 ---
 
-## 🚀 Panduan Instalasi (Lokal)
+## Local Environment Setup
 
-Ikuti langkah-langkah berikut untuk menjalankan SANGGARA di mesin lokal (Development Environment).
+Panduan teknis untuk melakukan instalasi SANGGARA pada mesin pengembangan lokal (*Development Environment*).
 
-**1. Clone Repositori**
+**1. Kloning Repositori**
 ```bash
 git clone [https://github.com/USERNAME_GITHUB_KAMU/sanggara.git](https://github.com/USERNAME_GITHUB_KAMU/sanggara.git)
 cd sanggara
