@@ -21,45 +21,39 @@
 
 ---
 
-## System Overview
+## 📖 System Overview
 
-**SANGGARA** adalah platform *dashboard* finansial internal tingkat korporasi yang dirancang untuk memantau, mengelola, dan mengotomatisasi pengawasan Pagu Anggaran (*Budget Ceiling*) secara komprehensif dan *real-time*. Sistem ini mentransformasi proses pencatatan konvensional menjadi infrastruktur digital terpusat, memungkinkan pihak manajemen untuk melacak *Commitment* (nilai kontrak) dan *Actual* (realisasi pengeluaran) pada setiap *Chart of Accounts* (COA) dengan presisi tingkat tinggi.
+**SANGGARA** adalah *dashboard* finansial internal tingkat korporasi untuk memantau, mengelola, dan mengotomatisasi pengawasan Pagu Anggaran (*Budget Ceiling*) secara *real-time*. Sistem ini secara presisi melacak *Commitment* (nilai kontrak) dan *Actual* (realisasi pengeluaran) pada setiap *Chart of Accounts* (COA). 
 
-Aplikasi ini diimplementasikan menggunakan arsitektur **Master-Detail View** guna mengoptimalkan efisiensi navigasi pengguna, dipadukan dengan antarmuka **Glassmorphism** berstandar modern serta fungsionalitas *Dark/Light Mode* dinamis untuk kenyamanan operasional.
-
-## Core Features
-
-- **Visualisasi Data & Analitika:** Implementasi grafik interaktif (Chart.js) untuk evaluasi kesehatan metrik anggaran dan persentase penyerapan secara akurat.
-- **Monitoring Realisasi Terintegrasi:** Sistem indikator otomatis berbasis kalkulasi saldo untuk membedakan status kelayakan anggaran (Terkendali / *Overbudget*).
-- **Manajemen Master Anggaran:** Sentralisasi dan pemeliharaan basis data Pagu Anggaran secara terstruktur per COA.
-- **Input Transaksi Dinamis:** Sistem pencatatan pengeluaran (*Running Balance*) terotomatisasi dengan perhitungan saldo instan, dilengkapi kapabilitas ekstraksi pelaporan (Export to Excel/CSV).
-- **AI Financial Analyst:** Integrasi *Artificial Intelligence* guna memfasilitasi analisis data historis dan penyusunan strategi finansial secara interaktif.
-- **Role-Based Access Control (RBAC):** Manajemen otorisasi dan hierarki pengguna secara spesifik (Administrator / JM SDM).
-- **Sistem Audit Trail:** Perekaman rekam jejak aktivitas operasional (*Create, Update, Delete*) secara terperinci guna memastikan integritas dan akuntabilitas data.
+Dibangun dengan arsitektur **Master-Detail View** dan antarmuka **Glassmorphism**, aplikasi ini dirancang untuk navigasi yang efisien serta dilengkapi fitur *Dark/Light Mode* dinamis.
 
 ---
 
-## System Interface
+## ✨ Core Features
 
-### Main Dashboard
+- **Visualisasi & Analitik:** Grafik interaktif (Chart.js) untuk evaluasi kesehatan metrik anggaran dan persentase penyerapan secara presisi.
+- **Real-time Monitoring:** Sistem indikator otomatis berbasis kalkulasi saldo untuk memantau status anggaran (Terkendali / *Overbudget*).
+- **Manajemen Master & Transaksi Dinamis:** Sentralisasi data Pagu Anggaran per COA dan pencatatan pengeluaran otomatis (*Running Balance*) dengan kapabilitas Export.
+- **AI Financial Analyst:** Integrasi AI interaktif untuk memfasilitasi analisis data historis dan strategi finansial.
+- **RBAC & Audit Trail:** Manajemen otorisasi pengguna spesifik (Administrator / JM SDM) dilengkapi rekam jejak aktivitas operasional (CUD) yang terperinci.
+
+---
+
+## 🖥️ System Interface
+
+### Dashboard & Analytics
 <p align="center">
   <img src="/sanggara/dashboard.png" width="49%" alt="Main Dashboard 1">
-  <img src="/sanggara/dashboard2.png" width="49%" alt="Main Dashboard 2">
-</p>
-
-### Analytics & Monitoring
-<p align="center">
   <img src="/sanggara/analisis.png" width="49%" alt="Analytics Chart">
-  <img src="/sanggara/monitoring.png" width="49%" alt="Real-time Monitoring">
 </p>
 
-### Budget & Transaction Management (COA)
+### Budget Management & Transactions
 <p align="center">
   <img src="/sanggara/mainanggaran.png" width="49%" alt="Master Budget">
   <img src="/sanggara/coa.png" width="49%" alt="Transaction List">
 </p>
 
-### User & System Administration
+### Administration & Logs
 <p align="center">
   <img src="/sanggara/user.png" width="49%" alt="User Management">
   <img src="/sanggara/log.png" width="49%" alt="Audit Log">
@@ -67,23 +61,23 @@ Aplikasi ini diimplementasikan menggunakan arsitektur **Master-Detail View** gun
 
 ---
 
-## Technology Stack
+## ⚙️ Technology Stack
 
-Sistem ini dikembangkan menggunakan arsitektur *Monolith* berbasis Inertia, memberikan performa optimal setara *Single Page Application* (SPA) dengan keamanan *backend* yang solid.
+Dikembangkan menggunakan arsitektur *Monolith* berbasis Inertia.js untuk performa responsif setara *Single Page Application* (SPA).
 
 - **Frontend:** React.js, Tailwind CSS, Chart.js
 - **Backend:** Laravel, PHP 8.x
-- **Routing & Data Bridge:** Inertia.js
+- **Routing & Bridge:** Inertia.js
 - **Database:** MySQL
-- **Build System:** Vite v8
+- **Build Tool:** Vite
 
 ---
 
-## Local Environment Setup
+## 🚀 Local Environment Setup
 
-Panduan teknis untuk melakukan instalasi SANGGARA pada mesin pengembangan lokal (*Development Environment*).
+Panduan teknis untuk instalasi SANGGARA pada mesin *Development Environment*.
 
-**1. Kloning Repositori**
+**1. Kloning Repositori & Masuk ke Direktori**
 ```bash
 git clone [https://github.com/USERNAME_GITHUB_KAMU/sanggara.git](https://github.com/USERNAME_GITHUB_KAMU/sanggara.git)
 cd sanggara
